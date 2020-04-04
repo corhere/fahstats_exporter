@@ -29,7 +29,7 @@ var (
 	)
 	donorLastWUDesc = prometheus.NewDesc(
 		"fahstats_donor_last_wu_seconds",
-		"Time elapsed since the last Folding@home Work Unit",
+		"Timestamp of the last Folding@home Work Unit",
 		donorLabels, nil,
 	)
 	donorActive7dDesc = prometheus.NewDesc(
@@ -66,7 +66,7 @@ var (
 	)
 	teamLastWUDesc = prometheus.NewDesc(
 		"fahstats_donor_team_last_wu_seconds",
-		"Time elapsed since the last Folding@home Work Unit completed for the team",
+		"Timestamp of the last Folding@home Work Unit completed for the team",
 		teamLabels, nil,
 	)
 	teamActive7dDesc = prometheus.NewDesc(
@@ -105,7 +105,7 @@ func (c StatsCollector) Collect(ch chan<- prometheus.Metric) {
 	dlabels := []string{stats.Name, strconv.Itoa(stats.ID)}
 	ch <- prometheus.MustNewConstMetric(donorCreditDesc, prometheus.UntypedValue, float64(stats.Credit), dlabels...)
 	ch <- prometheus.MustNewConstMetric(donorWUsDesc, prometheus.UntypedValue, float64(stats.TotalWUs), dlabels...)
-	ch <- prometheus.MustNewConstMetric(donorLastWUDesc, prometheus.GaugeValue, time.Since(stats.LastWorkUnit.Time()).Seconds(), dlabels...)
+	ch <- prometheus.MustNewConstMetric(donorLastWUDesc, prometheus.GaugeValue, float64(stats.LastWorkUnit.Time().Unix()), dlabels...)
 	ch <- prometheus.MustNewConstMetric(donorActive7dDesc, prometheus.GaugeValue, float64(stats.ActiveClients7), dlabels...)
 	ch <- prometheus.MustNewConstMetric(donorActive50dDesc, prometheus.GaugeValue, float64(stats.ActiveClients50), dlabels...)
 	ch <- prometheus.MustNewConstMetric(donorRankDesc, prometheus.GaugeValue, float64(stats.Rank), dlabels...)
@@ -116,7 +116,7 @@ func (c StatsCollector) Collect(ch chan<- prometheus.Metric) {
 		tlabels := append(dlabels, team.Name, strconv.Itoa(team.Team))
 		ch <- prometheus.MustNewConstMetric(teamCreditDesc, prometheus.UntypedValue, float64(team.Credit), tlabels...)
 		ch <- prometheus.MustNewConstMetric(teamWUsDesc, prometheus.UntypedValue, float64(team.TotalWUs), tlabels...)
-		ch <- prometheus.MustNewConstMetric(teamLastWUDesc, prometheus.GaugeValue, time.Since(team.LastWorkUnit.Time()).Seconds(), tlabels...)
+		ch <- prometheus.MustNewConstMetric(teamLastWUDesc, prometheus.GaugeValue, float64(team.LastWorkUnit.Time().Unix()), tlabels...)
 		ch <- prometheus.MustNewConstMetric(teamActive7dDesc, prometheus.GaugeValue, float64(team.ActiveClients7), tlabels...)
 		ch <- prometheus.MustNewConstMetric(teamActive50dDesc, prometheus.GaugeValue, float64(team.ActiveClients50), tlabels...)
 	}
